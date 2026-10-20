@@ -15,6 +15,8 @@ export interface Job {
   role: string;
   recruiterName: string;
   recruiterEmail: string;
+  /** Digits only, with country code (e.g. 5511999999999); used to open WhatsApp when there is no email. */
+  recruiterPhone: string;
   jobUrl: string;
   source: string;
   /** Resume version (slug in content/cv) whose PDF and pitch are sent. */
@@ -50,6 +52,7 @@ const limits = {
   role: 200,
   recruiterName: 200,
   recruiterEmail: 320,
+  recruiterPhone: 30,
   jobUrl: 2000,
   source: 200,
   subject: 300,
@@ -62,6 +65,7 @@ export function emptyJob(resumeId = 'base'): JobInput {
     role: '',
     recruiterName: '',
     recruiterEmail: '',
+    recruiterPhone: '',
     jobUrl: '',
     source: '',
     resumeId,
@@ -85,6 +89,11 @@ export function parseJob(value: unknown): JobInput | string {
   }
   if (!job.role) return 'Informe o cargo.';
   if (job.recruiterEmail && !emailPattern.test(job.recruiterEmail)) return 'Email de quem recruta inválido.';
+  if (job.recruiterPhone) {
+    const digits = normalizePhone(job.recruiterPhone);
+    if (digits.length < 10 || digits.length > 15) return 'Telefone de quem recruta inválido (use DDD e número).';
+    job.recruiterPhone = digits;
+  }
   if (job.jobUrl && !/^https?:\/\//i.test(job.jobUrl)) return 'O link da vaga deve começar com http:// ou https://.';
   if (!job.subject) job.subject = defaultSubject;
   const resumeId = v.resumeId ?? 'base';
@@ -100,6 +109,17 @@ export function parseJob(value: unknown): JobInput | string {
   return job;
 }
 
+/** Keeps only digits; a Brazilian number without country code (10 or 11 digits) gets 55. */
+export function normalizePhone(value: string) {
+  const digits = value.replace(/\D/g, '');
+  return digits.length === 10 || digits.length === 11 ? `55${digits}` : digits;
+}
+
+/** WhatsApp Web link that opens a chat with the recruiter with the message already typed. */
+export function whatsappUrl(phone: string, text: string) {
+  return `https://web.whatsapp.com/send?phone=${normalizePhone(phone)}&text=${encodeURIComponent(text)}`;
+}
+
 /** "Cargo — Empresa", or only the role when the company is not known. */
 export function jobTitle(job: Pick<Job, 'role' | 'company'>) {
   return job.company ? `${job.role} — ${job.company}` : job.role;
@@ -111,6 +131,7 @@ export const jobCsvColumns = [
   'role',
   'recruiterName',
   'recruiterEmail',
+  'recruiterPhone',
   'jobUrl',
   'source',
   'resumeId',

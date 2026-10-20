@@ -34,6 +34,7 @@ const migrations = [
     sent_at TEXT NOT NULL
   );
   CREATE INDEX emails_job ON emails(job_id);`,
+  `ALTER TABLE jobs ADD COLUMN recruiter_phone TEXT NOT NULL DEFAULT '';`,
 ];
 
 type Row = Record<string, string | number | null>;
@@ -43,6 +44,7 @@ const toJob = (r: Row): Job => ({
   role: String(r.role),
   recruiterName: String(r.recruiter_name),
   recruiterEmail: String(r.recruiter_email),
+  recruiterPhone: String(r.recruiter_phone),
   jobUrl: String(r.job_url),
   source: String(r.source),
   resumeId: String(r.resume_id),
@@ -70,6 +72,7 @@ const params = (job: JobInput) => [
   job.role,
   job.recruiterName,
   job.recruiterEmail,
+  job.recruiterPhone,
   job.jobUrl,
   job.source,
   job.resumeId,
@@ -108,15 +111,15 @@ export function openDatabase(dataRoot: string) {
     createJob(job: JobInput, createdAt = now()) {
       const { lastInsertRowid } = db
         .prepare(
-          `INSERT INTO jobs (company, role, recruiter_name, recruiter_email, job_url, source, resume_id, subject,
-            status, notes, applied_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO jobs (company, role, recruiter_name, recruiter_email, recruiter_phone, job_url, source, resume_id,
+            subject, status, notes, applied_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(...params(job), createdAt, now());
       return get(Number(lastInsertRowid)) as Job;
     },
     updateJob(id: number, job: JobInput) {
       db.prepare(
-        `UPDATE jobs SET company = ?, role = ?, recruiter_name = ?, recruiter_email = ?, job_url = ?, source = ?,
+        `UPDATE jobs SET company = ?, role = ?, recruiter_name = ?, recruiter_email = ?, recruiter_phone = ?, job_url = ?, source = ?,
           resume_id = ?, subject = ?, status = ?, notes = ?, applied_at = ?, updated_at = ? WHERE id = ?`,
       ).run(...params(job), now(), id);
       return get(id);

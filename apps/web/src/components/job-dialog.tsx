@@ -117,6 +117,9 @@ export function JobDialog() {
           <Field id="job-recruiterEmail" label="Email de quem recruta">
             <Input {...text('recruiterEmail')} type="email" maxLength={320} />
           </Field>
+          <Field id="job-recruiterPhone" label="WhatsApp de quem recruta">
+            <Input {...text('recruiterPhone')} type="tel" placeholder="(11) 99999-9999" maxLength={30} />
+          </Field>
           <Field id="job-jobUrl" label="Link da vaga">
             <Input {...text('jobUrl')} type="url" placeholder="https://" maxLength={2000} />
           </Field>

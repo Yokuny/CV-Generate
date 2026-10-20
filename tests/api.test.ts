@@ -195,6 +195,21 @@ describe('API local', () => {
     expect((await invalid.json()).error).toMatch(/Linha 2/);
   });
 
+  it('aceita vaga só com WhatsApp e não envia email', async () => {
+    const created = await call('jobs', {
+      method: 'POST',
+      json: { role: 'Backend', recruiterName: 'Ana', recruiterPhone: '(11) 94545-4957' },
+    });
+    expect(created.status).toBe(201);
+    const job = await created.json();
+    expect(job.recruiterPhone).toBe('5511945454957');
+    const preview = await (await call(`jobs/${job.id}/preview`)).json();
+    expect(preview.problems).not.toContain('Cadastre o email ou o telefone de quem recruta.');
+    const send = await call(`jobs/${job.id}/send`, { method: 'POST', json: {} });
+    expect(send.status).toBe(400);
+    expect((await call('jobs', { method: 'POST', json: { role: 'X', recruiterPhone: '123' } })).status).toBe(400);
+  });
+
   it('grava pitch com controle de conflito', async () => {
     const pitch = await (await call('pitches/base')).json();
     expect((await call('pitches/base', { method: 'PUT', json: { text: 'novo', expectedRevision: null } })).status).toBe(
@@ -236,6 +251,7 @@ describe('banco de dados', () => {
       role: 'B',
       recruiterName: '',
       recruiterEmail: '',
+      recruiterPhone: '',
       jobUrl: '',
       source: '',
       resumeId: 'base',

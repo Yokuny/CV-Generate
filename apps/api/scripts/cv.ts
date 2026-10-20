@@ -25,7 +25,7 @@ const usage = `Uso:
   pnpm cv pdf <slug> [--check]                   Gera output/pdf/<slug>.pdf com o layout da versão
   pnpm cv job list                               Lista as vagas de data/cv-studio.db
   pnpm cv job add --resume <slug> --company "…" --role "…" [--recruiter "…"] [--email …]
-                  [--url …] [--source …] [--subject "…"] [--notes-file <arquivo>]
+                  [--phone "(11) 99999-9999"] [--url …] [--source …] [--subject "…"] [--notes-file <arquivo>]
                                                  Cadastra a vaga como rascunho
   pnpm cv job update <id> [os mesmos campos]     Altera os campos da vaga
   pnpm cv job preview <id>                       Mostra o email como será enviado e gera o PDF
@@ -48,6 +48,7 @@ const jobFields = {
   role: 'role',
   recruiter: 'recruiterName',
   email: 'recruiterEmail',
+  phone: 'recruiterPhone',
   url: 'jobUrl',
   source: 'source',
   subject: 'subject',
@@ -74,7 +75,7 @@ async function jobCommand(sub: string | undefined, positionals: string[], values
     return value;
   };
   const describe = (j: Job) =>
-    `#${j.id}  ${jobTitle(j)}  [${jobStatusLabels[j.status]}]  versão ${j.resumeId}${j.recruiterEmail ? `  → ${j.recruiterEmail}` : ''}`;
+    `#${j.id}  ${jobTitle(j)}  [${jobStatusLabels[j.status]}]  versão ${j.resumeId}${j.recruiterEmail ? `  → ${j.recruiterEmail}` : j.recruiterPhone ? `  → WhatsApp ${j.recruiterPhone}` : ''}`;
 
   /** The email exactly as it will be sent, with the PDF written to output/pdf for review. */
   const preview = async (j: Job) => {
@@ -186,6 +187,7 @@ async function main() {
       role: { type: 'string' },
       recruiter: { type: 'string' },
       email: { type: 'string' },
+      phone: { type: 'string' },
       url: { type: 'string' },
       source: { type: 'string' },
       subject: { type: 'string' },

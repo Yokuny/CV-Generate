@@ -33,7 +33,7 @@ export async function composeEmail({ files }: Pick<ApplicationDeps, 'files'>, jo
   const resume = await files.find(job.resumeId);
   const problems: string[] = [];
   if (!resume) problems.push(`A versão "${job.resumeId}" não existe mais em content/cv.`);
-  if (!job.recruiterEmail) problems.push('Cadastre o email de quem recruta.');
+  if (!job.recruiterEmail && !job.recruiterPhone) problems.push('Cadastre o email ou o telefone de quem recruta.');
   const pitch = await files.effectivePitch(job.resumeId);
   const nome = resume ? resumeName(resume.markdown) : '';
   const values = { empresa: job.company, cargo: job.role, recrutadora: job.recruiterName, nome };
@@ -74,6 +74,7 @@ export class ApplicationError extends Error {
 export async function sendApplication(deps: ApplicationDeps, job: Job) {
   const { db, mail } = deps;
   const email = await composeEmail(deps, job);
+  if (!email.to) email.problems.push('Cadastre o email de quem recruta.');
   if (email.problems.length) throw new ApplicationError(email.problems.join(' '), 400);
   const record = {
     jobId: job.id,

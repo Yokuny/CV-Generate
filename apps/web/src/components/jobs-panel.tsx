@@ -1,6 +1,15 @@
-import { type Job, type JobStatus, jobStatuses, jobStatusLabels, jobTitle } from '@cv-studio/core/jobs';
+import { type Job, type JobStatus, jobStatuses, jobStatusLabels, jobTitle, whatsappUrl } from '@cv-studio/core/jobs';
 import { mailConnected } from '@cv-studio/core/mail';
-import { ArrowDownToLine, ArrowUpFromLine, ExternalLink, Pencil, Plus, RotateCw, Send } from 'lucide-react';
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  ExternalLink,
+  MessageCircle,
+  Pencil,
+  Plus,
+  RotateCw,
+  Send,
+} from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { IconButton } from '@/components/icon-button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/date';
 import { useJobs } from '@/store/jobs';
+import { notify } from '@/store/notice';
 import { selectCurrent, useResumes } from '@/store/resumes';
 
 function StatusSelect({ job }: { job: Job }) {
@@ -34,6 +44,19 @@ function JobRow({ job }: { job: Job }) {
   const isCurrentResume = useResumes((s) => selectCurrent(s).id === job.resumeId);
   const setEditing = useJobs((s) => s.setEditing);
   const setSendingId = useJobs((s) => s.setSendingId);
+  const openWhatsapp = async () => {
+    // Opened synchronously so the browser does not block the popup; the link is set once the pitch is ready.
+    const tab = window.open('about:blank', '_blank');
+    try {
+      const { body } = await useJobs.getState().preview(job.id);
+      const url = whatsappUrl(job.recruiterPhone, body);
+      if (tab) tab.location.href = url;
+      else window.open(url, '_blank');
+    } catch (error) {
+      tab?.close();
+      notify((error as Error).message);
+    }
+  };
   return (
     <TableRow data-current-resume={isCurrentResume ? 'true' : undefined}>
       <TableCell className="whitespace-normal">
@@ -52,7 +75,7 @@ function JobRow({ job }: { job: Job }) {
       </TableCell>
       <TableCell className="whitespace-normal">
         <div>{job.recruiterName || '—'}</div>
-        <div className="job-sub">{job.recruiterEmail || 'sem email'}</div>
+        <div className="job-sub">{job.recruiterEmail || job.recruiterPhone || 'sem contato'}</div>
       </TableCell>
       <TableCell className="whitespace-normal">
         <div className="job-sub">
@@ -81,14 +104,26 @@ function JobRow({ job }: { job: Job }) {
           >
             <Pencil />
           </IconButton>
-          <IconButton
-            label={job.appliedAt ? 'Revisar e reenviar email' : 'Revisar e enviar email'}
-            variant={job.status === 'rascunho' && !job.appliedAt ? 'success' : 'secondary'}
-            size="icon-sm"
-            onClick={() => setSendingId(job.id)}
-          >
-            {job.appliedAt ? <RotateCw /> : <Send />}
-          </IconButton>
+          {job.recruiterPhone && (
+            <IconButton
+              label="Abrir WhatsApp com o pitch"
+              variant={job.status === 'rascunho' && !job.recruiterEmail ? 'success' : 'secondary'}
+              size="icon-sm"
+              onClick={openWhatsapp}
+            >
+              <MessageCircle />
+            </IconButton>
+          )}
+          {(job.recruiterEmail || !job.recruiterPhone) && (
+            <IconButton
+              label={job.appliedAt ? 'Revisar e reenviar email' : 'Revisar e enviar email'}
+              variant={job.status === 'rascunho' && !job.appliedAt ? 'success' : 'secondary'}
+              size="icon-sm"
+              onClick={() => setSendingId(job.id)}
+            >
+              {job.appliedAt ? <RotateCw /> : <Send />}
+            </IconButton>
+          )}
         </div>
       </TableCell>
     </TableRow>
