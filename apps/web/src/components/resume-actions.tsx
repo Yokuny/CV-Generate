@@ -1,9 +1,13 @@
-import { ArrowDownToLine, ArrowUpFromLine, LoaderCircle, Save } from 'lucide-react';
-import { type ComponentProps, type ReactNode, useRef } from 'react';
-import { useShallow } from 'zustand/react/shallow';
+// TODO: processo para fazer edição e gestão via interface (Import e Save desativados: hoje a edição é feita pelos arquivos/IA)
+// import { ArrowDownToLine, ArrowUpFromLine, LoaderCircle, Save } from 'lucide-react';
+// import { type ComponentProps, type ReactNode, useRef } from 'react';
+// import { useShallow } from 'zustand/react/shallow';
+// import { selectDeleting, selectDirty, selectHasVersion, useResumes } from '@/store/resumes';
+import { ArrowDownToLine } from 'lucide-react';
+import type { ComponentProps, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
-import { selectDeleting, selectDirty, selectHasVersion, useResumes } from '@/store/resumes';
+import { selectHasVersion, useResumes } from '@/store/resumes';
 
 function ActionButton({ label, icon, ...props }: ComponentProps<typeof Button> & { label: string; icon: ReactNode }) {
   return (
@@ -15,21 +19,25 @@ function ActionButton({ label, icon, ...props }: ComponentProps<typeof Button> &
 }
 
 export function ResumeActions() {
-  const { saving, importMarkdown, exportSources, save } = useResumes(
-    useShallow(({ saving, importMarkdown, exportSources, save }) => ({
-      saving,
-      importMarkdown,
-      exportSources,
-      save,
-    })),
-  );
+  // TODO: processo para fazer edição e gestão via interface
+  // const { saving, importMarkdown, exportSources, save } = useResumes(
+  //   useShallow(({ saving, importMarkdown, exportSources, save }) => ({
+  //     saving,
+  //     importMarkdown,
+  //     exportSources,
+  //     save,
+  //   })),
+  // );
+  const exportSources = useResumes((s) => s.exportSources);
   const disabled = useResumes((s) => !s.ready || !selectHasVersion(s));
-  const deleting = useResumes(selectDeleting);
-  const canSave = useResumes((s) => s.writable && selectDirty(s));
-  const importRef = useRef<HTMLInputElement>(null);
+  // TODO: processo para fazer edição e gestão via interface
+  // const deleting = useResumes(selectDeleting);
+  // const canSave = useResumes((s) => s.writable && selectDirty(s));
+  // const importRef = useRef<HTMLInputElement>(null);
   return (
     <div className="header-actions">
       <ButtonGroup className="action-group" aria-label="Resume actions">
+        {/* TODO: processo para fazer edição e gestão via interface
         <ActionButton
           label="Import"
           title="Import Markdown"
@@ -37,6 +45,7 @@ export function ResumeActions() {
           onClick={() => importRef.current?.click()}
           disabled={disabled || deleting}
         />
+        */}
         <ActionButton
           label="Download"
           title="Download source files"
@@ -44,6 +53,7 @@ export function ResumeActions() {
           onClick={exportSources}
           disabled={disabled}
         />
+        {/* TODO: processo para fazer edição e gestão via interface
         <ActionButton
           label="Save"
           title="Salvar agora (no modo local, as edições também são salvas automaticamente)"
@@ -51,6 +61,7 @@ export function ResumeActions() {
           onClick={save}
           disabled={disabled || !canSave || saving || deleting}
         />
+        */}
         <ActionButton
           className="ml-1 rounded-md! shadow-none!"
           variant="default"
@@ -61,6 +72,7 @@ export function ResumeActions() {
           disabled={disabled}
         />
       </ButtonGroup>
+      {/* TODO: processo para fazer edição e gestão via interface
       <input
         ref={importRef}
         type="file"
@@ -72,6 +84,7 @@ export function ResumeActions() {
           e.target.value = '';
         }}
       />
+      */}
     </div>
   );
 }
