@@ -723,6 +723,12 @@ body.is-scrubbing * {
   font-size: 12px;
   border-radius: 6px;
 }
+.preview-toolbar .view-switch-divider {
+  align-self: stretch;
+  width: 1px;
+  margin: 5px 6px;
+  background: #d2d2d7;
+}
 .preview-toolbar .view-switch button[aria-pressed="true"] {
   color: #1d1d1f;
   background: #fff;

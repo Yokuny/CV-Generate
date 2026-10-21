@@ -58,7 +58,8 @@ interface ResumesState extends PersistedResumes {
   update: (changes: VersionPatch) => void;
   updateLayout: (change: (layout: Layout) => Layout) => void;
   alignBlocks: (blocks: BlockRange[], align: TextAlignment) => void;
-  save: () => Promise<void>;
+  // TODO: processo para fazer edição e gestão via interface
+  // save: () => Promise<void>;
   /** Writes one version to content/cv; quiet saves only report failures. */
   saveById: (id: string, quiet?: boolean) => Promise<void>;
   /** Copies the current version under a new name, writing its files in local mode; returns whether it was created. */
@@ -67,7 +68,8 @@ interface ResumesState extends PersistedResumes {
   cancelClose: () => void;
   /** Deletes the version awaiting confirmation; throws on failure. */
   confirmClose: () => Promise<void>;
-  importMarkdown: (file?: File) => Promise<void>;
+  // TODO: processo para fazer edição e gestão via interface
+  // importMarkdown: (file?: File) => Promise<void>;
   exportSources: () => void;
 }
 
@@ -76,7 +78,8 @@ export const selectCurrent = (s: ResumesState) =>
 export const selectHasVersion = (s: ResumesState) => s.versions.length > 0;
 export const selectDeleting = (s: ResumesState) => s.deletingId !== null;
 export const selectIsDirty = (s: ResumesState, v: Version) => s.saved[v.id] !== snapshot(v);
-export const selectDirty = (s: ResumesState) => selectIsDirty(s, selectCurrent(s));
+// TODO: processo para fazer edição e gestão via interface
+// export const selectDirty = (s: ResumesState) => selectIsDirty(s, selectCurrent(s));
 export const selectHasDrafts = (s: ResumesState) => s.versions.some((v) => selectIsDirty(s, v));
 
 let loading: Promise<void> | undefined;
@@ -188,11 +191,12 @@ export const useResumes = create<ResumesState>()(
       updateLayout: (change) => get().update((v) => ({ layout: change(v.layout) })),
       alignBlocks: (blocks, align) =>
         get().update((v) => ({ layout: alignBlocks(v.layout, v.markdown, blocks, align) })),
-      save: async () => {
-        const { id } = selectCurrent(get());
-        clearTimeout(autosaveTimers.get(id));
-        await get().saveById(id);
-      },
+      // TODO: processo para fazer edição e gestão via interface
+      // save: async () => {
+      //   const { id } = selectCurrent(get());
+      //   clearTimeout(autosaveTimers.get(id));
+      //   await get().saveById(id);
+      // },
       saveById: async (id, quiet = false) => {
         await inflight.get(id);
         const version = get().versions.find((v) => v.id === id);
@@ -296,19 +300,20 @@ export const useResumes = create<ResumesState>()(
           set({ deletingId: null });
         }
       },
-      importMarkdown: async (file) => {
-        if (!file) return;
-        if (!/\.md$/i.test(file.name) || file.size > 250000) {
-          notify('Escolha um arquivo .md de até 250 KB.');
-          return;
-        }
-        try {
-          get().update({ markdown: await file.text() });
-          notify('Markdown importado como rascunho. Revise antes de salvar.');
-        } catch {
-          notify('Não foi possível ler o arquivo.');
-        }
-      },
+      // TODO: processo para fazer edição e gestão via interface
+      // importMarkdown: async (file) => {
+      //   if (!file) return;
+      //   if (!/\.md$/i.test(file.name) || file.size > 250000) {
+      //     notify('Escolha um arquivo .md de até 250 KB.');
+      //     return;
+      //   }
+      //   try {
+      //     get().update({ markdown: await file.text() });
+      //     notify('Markdown importado como rascunho. Revise antes de salvar.');
+      //   } catch {
+      //     notify('Não foi possível ler o arquivo.');
+      //   }
+      // },
       exportSources: () => {
         downloadSources(selectCurrent(get()));
         notify('Arquivos baixados. Coloque-os em content/cv para guardar esta versão.');

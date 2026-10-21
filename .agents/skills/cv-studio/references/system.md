@@ -73,7 +73,7 @@ A aba **Vagas** guarda as candidaturas em `data/cv-studio.db` (SQLite nativo do 
 
 ## Git
 
-O repositório é compartilhado por várias pessoas e guarda só código, skill e documentação. `content/cv/*`, `data/`, `output/` e `.env.local` estão no `.gitignore`. A interface, o CLI e a skill só gravam arquivos locais: não há commit de versões, pitches ou vagas, nem histórico para recuperar o que for apagado. Nunca use `git add -f` nesses caminhos. Mudanças de código só são commitadas quando o usuário pedir.
+O repositório guarda só código, skill e documentação. `content/cv/*`, `data/`, `output/` e `.env.local` estão no `.gitignore`: nunca faça commit, `git add -f` ou push deles, e não há histórico para recuperar o que for apagado. Código só é commitado quando o usuário pedir.
 
 ## Impressão
 
