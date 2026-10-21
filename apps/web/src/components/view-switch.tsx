@@ -21,7 +21,9 @@ export function ViewSwitch() {
   return (
     <div className="preview-toolbar">
       <fieldset className="view-switch" aria-label="Tipo de visualização">
-        {modes.map(([mode, label, title, Icon]) => (
+        {modes.map(([mode, label, title, Icon]) => [
+          // Jobs is not a view of the document: keep it in the group, set apart.
+          mode === 'jobs' && <span key="divider" className="view-switch-divider" aria-hidden="true" />,
           <Button
             key={mode}
             variant="ghost"
@@ -33,8 +35,8 @@ export function ViewSwitch() {
             onClick={() => setPreview(mode)}
           >
             <Icon /> {label}
-          </Button>
-        ))}
+          </Button>,
+        ])}
       </fieldset>
     </div>
   );
