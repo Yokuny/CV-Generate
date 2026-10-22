@@ -1,0 +1,101 @@
+{
+  "gerado_por": "scripts/docs/sync-docs.mjs",
+  "features": [
+    {
+      "slug": "harness-docs",
+      "feature": "Harness de documentação para agentes",
+      "descricao": "Protocolo de descoberta e registro para agentes, gateway docs/index gerado, log AD-NNN, skills de spec e commit e checagem no CI.",
+      "data": "2026-10-22",
+      "status": "concluido",
+      "areas": [
+        "harness",
+        "docs",
+        "skills",
+        "infra"
+      ],
+      "decisoes": [
+        "AD-011",
+        "AD-012"
+      ],
+      "spec": [],
+      "planos": [],
+      "doc": "features/harness-docs/feature.md"
+    }
+  ],
+  "planos_nao_arquivados": [],
+  "specs_sem_registro": [],
+  "decisoes": [
+    {
+      "id": "AD-001",
+      "decisao": "Markdown GFM em `content/cv` como fonte do currículo, renderizado por `react-markdown` sem HTML bruto; um arquivo por versão, layout e nome",
+      "data": "2026-10-07",
+      "status": "active"
+    },
+    {
+      "id": "AD-002",
+      "decisao": "API local grava os arquivos (aba = arquivo, autosave, revisão SHA-256, Host/Origin locais); mudanças externas chegam à UI por SSE e são mesc",
+      "data": "2026-10-07",
+      "status": "active"
+    },
+    {
+      "id": "AD-003",
+      "decisao": "PDF por impressão nativa do navegador com `@page` A4, sem captura raster; texto selecionável e links preservados.",
+      "data": "2026-10-07",
+      "status": "active (renderizador do anexo e do CLI: AD-010)"
+    },
+    {
+      "id": "AD-004",
+      "decisao": "IA só pela skill `cv-studio` do editor, usando o CLI `pnpm cv`; a UI e a API não chamam modelos nem pedem chaves.",
+      "data": "2026-10-07",
+      "status": "active (commits da skill retirados por AD-012)"
+    },
+    {
+      "id": "AD-005",
+      "decisao": "Monorepo pnpm `apps/web` + `apps/api` (Express) + `packages/core` (sem `node:*`); no dev a API é carregada pelo SSR do Vite em `/api`, na me",
+      "data": "2026-10-08",
+      "status": "active"
+    },
+    {
+      "id": "AD-006",
+      "decisao": "Vagas e envios em `node:sqlite` (`data/cv-studio.db`, journal DELETE, migrações por `user_version`), com exportação/importação CSV.",
+      "data": "2026-10-08",
+      "status": "active"
+    },
+    {
+      "id": "AD-007",
+      "decisao": "Pitch por versão em `content/cv/<slug>.pitch.md` (texto puro com variáveis), até 20 pitches; envio SMTP com nodemailer e o currículo em PDF",
+      "data": "2026-10-08",
+      "status": "active (geração do anexo: AD-010; envio por agente: AD-011)"
+    },
+    {
+      "id": "AD-008",
+      "decisao": "Outlook por OAuth2 com código de dispositivo, client ID próprio em `.env.local` e tokens renovados na API, gravados em `data/mail-account.js",
+      "data": "2026-10-08",
+      "status": "active"
+    },
+    {
+      "id": "AD-009",
+      "decisao": "Gmail/custom com senha de app e \"Salvar e testar\" que autentica antes de substituir a conta; a UI só mostra conectado com `verified`.",
+      "data": "2026-10-08",
+      "status": "active"
+    },
+    {
+      "id": "AD-010",
+      "decisao": "Renderizador único do currículo (`ResumeMarkdown` + `resume.css` de `packages/core`), usado pela UI e por `apps/api/src/resume-html.ts`, que",
+      "data": "2026-10-08",
+      "status": "active"
+    },
+    {
+      "id": "AD-011",
+      "decisao": "Candidatura completa pelo CLI (`pnpm cv job list|add|update|preview|send`), com a mesma montagem e envio da API; agente só envia com `--yes`",
+      "data": "2026-10-08",
+      "status": "active"
+    },
+    {
+      "id": "AD-012",
+      "decisao": "Currículos, pitches, vagas e credenciais ficam só na máquina de cada pessoa (`content/cv/*`, `data/`, `output/`, `.env.local` no `.gitignore",
+      "data": "2026-10-09",
+      "status": "active"
+    }
+  ]
+}
