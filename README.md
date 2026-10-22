@@ -146,4 +146,4 @@ pnpm test
 pnpm run test:e2e
 ```
 
-E2E usa Chromium; se necessário, `npx playwright install chromium`. Decisões em `docs/decisions.md`; termos em `docs/glossary.md`; configuração de email em `docs/email-gmail.md` e `docs/email-outlook.md`.
+E2E usa Chromium; se necessário, `npx playwright install chromium`. Decisões em `.specs/STATE.md` (log `AD-NNN`) e `docs/adr/`; protocolo de documentação em `AGENTS.md` e índice em `docs/index.md`; termos em `docs/glossary.md`; configuração de email em `docs/email-gmail.md` e `docs/email-outlook.md`.

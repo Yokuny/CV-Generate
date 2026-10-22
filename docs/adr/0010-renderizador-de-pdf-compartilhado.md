@@ -1,0 +1,9 @@
+# 010 — Renderizador de PDF compartilhado e independente da UI
+
+**Status**: Aceito · **Data**: 2026-10-08 · **Log**: [AD-010](../../.specs/STATE.md#ad-010)
+
+**Contexto:** o anexo do email era impresso abrindo `/?print=<slug>` da UI de dev, então a candidatura sem interface (CLI e skill) não conseguia gerar o PDF. O PDF precisa sair igual à prévia e ao **Exportar PDF**, com a diagramação que o usuário define no painel de design.
+
+**Decisão:** a página do currículo tem uma só fonte. `ResumeMarkdown` (`packages/core/src/resume.ts`, `react-markdown` + `remark-gfm` com o alinhamento por bloco) e `packages/core/src/resume.css` são usados pela folha da UI e por `apps/api/src/resume-html.ts`. Esse módulo gera um HTML autônomo: `meta charset`, o subconjunto do preflight do Tailwind que afeta o currículo, os tokens de `<slug>.layout.json` (`layoutCssDeclarations`) e `@page` A4 com a margem do layout. O Chromium do Playwright o carrega com `setContent` e imprime com `page.pdf`. Antes de imprimir, uma checagem no DOM aponta elementos que passam da margem direita e itens ou linhas de tabela mais altos que a área útil. `pnpm cv pdf <slug> [--check]` grava em `output/pdf/`. As personalizações já persistiam em `<slug>.layout.json` (autosave do painel), então não foi criado outro formato. Foi recusado o WeasyPrint, usado pela skill `doc-html-pdf` de outro projeto: ele respeita melhor `break-inside` em `<tr>`, mas renderiza diferente da prévia do navegador, que é a referência do usuário, e exige Python e pango. As linhas da tabela de competências são curtas, e a checagem aponta o caso que racharia.
+
+**Consequência:** a prévia, o **Exportar PDF**, o anexo e o CLI usam o mesmo HTML e CSS. O anexo não depende mais de `pnpm run dev`. A rota `?print` saiu. Uma mudança de estilo do currículo é feita em `resume.css`; o CSS da interface fica em `index.css`.

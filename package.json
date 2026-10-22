@@ -18,7 +18,10 @@
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "cv": "pnpm -s --filter @cv-studio/api cv",
-    "setup:pdf": "pnpm --filter @cv-studio/api exec playwright install chromium"
+    "setup:pdf": "pnpm --filter @cv-studio/api exec playwright install chromium",
+    "docs:sync": "node scripts/docs/sync-docs.mjs",
+    "docs:check": "node scripts/docs/sync-docs.mjs --check",
+    "docs:context": "node scripts/docs/sync-docs.mjs --context"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
