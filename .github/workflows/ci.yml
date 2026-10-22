@@ -17,6 +17,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm run check
+      # A prévia do envio (testes do CLI) imprime o PDF com o Chromium do Playwright.
+      - run: pnpm --filter @cv-studio/api exec playwright install --with-deps chromium
       - run: pnpm test
       # Gateway de documentação (AGENTS.md): docs/index.* em dia com os
       # feature.md e frontmatter válido (áreas, decisões AD-NNN, specs).
