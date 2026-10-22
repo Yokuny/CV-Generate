@@ -22,6 +22,12 @@
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "overrides": [
     {
+      "includes": ["docs/index.json", ".specs/lessons.json"],
+      "linter": { "enabled": false },
+      "formatter": { "enabled": false },
+      "assist": { "enabled": false }
+    },
+    {
       "includes": ["apps/web/src/index.css", "packages/core/src/resume.css"],
       "linter": { "rules": { "complexity": { "noImportantStyles": "off" } } }
     }
